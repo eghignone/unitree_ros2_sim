@@ -23,7 +23,8 @@
 #include "rclcpp/subscription.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "rclcpp_lifecycle/state.hpp"
-#include "realtime_tools/realtime_buffer.h"
+#include "realtime_tools/realtime_buffer.hpp"
+#include "realtime_tools/realtime_publisher.hpp"
 #include "ros2_unitree_legged_msgs/msg/motor_cmd.hpp"   // Command type
 #include "ros2_unitree_legged_msgs/msg/motor_state.hpp"   // State type
 #include "ros2_unitree_legged_control_parameters.hpp"
