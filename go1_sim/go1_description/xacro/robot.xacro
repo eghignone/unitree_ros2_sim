@@ -22,10 +22,10 @@
 
     <!-- Debug mode will hung up the robot, use "true" or "false" to switch it. -->
     <xacro:if value="$(arg DEBUG)">
-        <link name="world"/>
+        <link name="odom"/>
         <joint name="base_static_joint" type="fixed">
             <origin rpy="0 0 0" xyz="0 0 0"/>
-            <parent link="world"/>
+            <parent link="odom"/>
             <child link="base"/>
         </joint>
     </xacro:if> 
@@ -186,7 +186,7 @@
         <sensor type="ray" name="lidar">
         <pose>0 0 0 0 0 0</pose>
         <visualize>false</visualize>
-        <update_rate>10</update_rate>
+        <update_rate>30</update_rate>
         <ray>
             <scan>
                 <horizontal>
@@ -222,7 +222,7 @@
             <!-- <robotNamespace>${g_robot_name}</robotNamespace> -->
             <body_name>base_link</body_name>
             <topic_name>odom</topic_name>
-            <!-- <frame_name>world</frame_name> -->
+            <frame_name>odom</frame_name>
             <update_rate>100</update_rate>
         </plugin>
     </gazebo>

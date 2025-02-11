@@ -4,11 +4,11 @@ from nav_msgs.msg import Odometry
 from tf2_ros import TransformBroadcaster
 from geometry_msgs.msg import TransformStamped
 from rclpy.qos import QoSProfile
+import copy
 
-
-class OdomToTFBroadcaster(Node):
+class OdomTransformBroadcaster(Node):
     def __init__(self):
-        super().__init__('odom_to_tf_broadcaster')
+        super().__init__('odom_tf_broadcaster')
         
         # Initialize the TransformBroadcaster
         self.tf_broadcaster = TransformBroadcaster(self)
@@ -25,49 +25,39 @@ class OdomToTFBroadcaster(Node):
     
     def odom_callback(self, msg: Odometry):
         # Create a TransformStamped message
-        t = TransformStamped()
+        t_odom = TransformStamped()
         
         # Set the timestamp to the time of the received message
-        t.header.stamp = msg.header.stamp
+        t_odom.header.stamp = msg.header.stamp
         
         # Set the frame IDs
-        t.header.frame_id = "odom"
-        t.child_frame_id = "base_link"
+        t_odom.header.frame_id = "odom"
+        t_odom.child_frame_id = "base_link"
         
         # Set the translation
-        t.transform.translation.x = msg.pose.pose.position.x
-        t.transform.translation.y = msg.pose.pose.position.y
-        t.transform.translation.z = msg.pose.pose.position.z
+        t_odom.transform.translation.x = msg.pose.pose.position.x
+        t_odom.transform.translation.y = msg.pose.pose.position.y
+        t_odom.transform.translation.z = msg.pose.pose.position.z
         
         # Set the rotation
-        t.transform.rotation = msg.pose.pose.orientation
+        t_odom.transform.rotation = msg.pose.pose.orientation
 
-        t_map = TransformStamped()
-        t_map.header.stamp = msg.header.stamp
-        t_map.header.frame_id = "map"
-        t_map.child_frame_id = "odom"
-        t_map.transform.translation.x = 0.0
-        t_map.transform.translation.y = 0.0
-        t_map.transform.translation.z = 0.0
-        t_map.transform.rotation.x = 0.0
-        t_map.transform.rotation.y = 0.0
-        t_map.transform.rotation.z = 0.0
-        t_map.transform.rotation.w = 1.0
+        # Base footprint
+        t_base_footprint = copy.deepcopy(t_odom)
+        t_base_footprint.header.frame_id = "base_link" 
+        t_base_footprint.child_frame_id = "base_footprint"
+        t_base_footprint.transform.translation.z = 0.0 
 
         # Broadcast the transforms
-        # Fixed map -> odom transform
-        # odom -> base link based on ground truth plugin
-        self.tf_broadcaster.sendTransform(t)
-        self.tf_broadcaster.sendTransform(t_map)
-
-        # self.get_logger().info('Broadcasting transform from {} to {}'.format(
-        #     t.header.frame_id, t.child_frame_id))
-
+        # odom -> base_link based on ground truth plugin
+        # base_link -> base_footprint projecting to z=0
+        self.tf_broadcaster.sendTransform(t_base_footprint)
+        self.tf_broadcaster.sendTransform(t_odom)
 
 def main(args=None):
     rclpy.init(args=args)
     
-    node = OdomToTFBroadcaster()
+    node = OdomTransformBroadcaster()
     
     try:
         rclpy.spin(node)

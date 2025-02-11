@@ -60,21 +60,21 @@ def generate_launch_description():
                    ]
     )
 
-    map_odom_tf_publisher_node = Node(
+    odom_tf_publisher_node = Node(
         package='go1_navigation',
         executable='nav_tf_publisher',
-        name='map_odom_transform_publisher',
+        name='odom_transform_publisher',
         output='screen'
     )
 
-    static_map_publisher_node = Node(
-        package='go1_navigation',
-        executable='static_map_publisher',
-        name='static_map_publisher',
-        output='screen'
-    )
+    # static_map_publisher_node = Node(
+    #     package='go1_navigation',
+    #     executable='static_map_publisher',
+    #     name='static_map_publisher',
+    #     output='screen'
+    # )
 
-    map_file_path = os.path.join(get_package_share_directory('go1_navigation'), 'map', 'map.yaml')
+    # map_file_path = os.path.join(get_package_share_directory('go1_navigation'), 'map', 'map.yaml')
 
     # map_publisher_node = Node(
     #     package='nav2_map_server',
@@ -86,24 +86,24 @@ def generate_launch_description():
     #     ]
     # )
 
-    map_publisher_node = Node(
-        package='nav2_map_server',
-        executable='map_server',
-        name='map_server',
-        output='screen',
-        parameters=[{'yaml_filename': map_file_path}],
-        remappings=[('map', 'map')]
-    )
+    # map_publisher_node = Node(
+    #     package='nav2_map_server',
+    #     executable='map_server',
+    #     name='map_server',
+    #     output='screen',
+    #     parameters=[{'yaml_filename': map_file_path}],
+    #     remappings=[('map', 'map')]
+    # )
     
-    manager_node = Node(
-        package='nav2_lifecycle_manager',
-        executable='lifecycle_manager',
-        name='lifecycle_manager_map_server',
-        output='screen',
-        parameters=[{'use_sim_time': False},
-                    {'autostart': True},
-                    {'node_names': ['map_server']}]
-    )
+    # manager_node = Node(
+    #     package='nav2_lifecycle_manager',
+    #     executable='lifecycle_manager',
+    #     name='lifecycle_manager_map_server',
+    #     output='screen',
+    #     parameters=[{'use_sim_time': False},
+    #                 {'autostart': True},
+    #                 {'node_names': ['map_server']}]
+    # )
 
     launch_ros2_control = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(
@@ -142,8 +142,8 @@ def generate_launch_description():
             spawn_robot,
             launch_ros2_control,
             visualize_robot,
-            map_odom_tf_publisher_node,
-            static_map_publisher_node
+            odom_tf_publisher_node,
+            # static_map_publisher_node
             # map_publisher_node,
             # RegisterEventHandler(
             #     event_handler=OnProcessExit(
