@@ -1,0 +1,20 @@
+services:
+  unitree_sim:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: unitree_ros2_sim:latest
+    container_name: unitree_sim
+    tty: true
+    stdin_open: true
+    network_mode: "host"
+    working_dir: /workspace/src
+    volumes:
+      - ./:/workspace/src:rw
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
+      - ../ros2_cache/build:/workspace/build:rw
+      - ../ros2_cache/install:/workspace/install:rw
+      - ../ros2_cache/log:/workspace/log:rw
+    environment:
+      - DISPLAY=PUT YOUR DISPLAY HERE
+    restart: unless-stopped
